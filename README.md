@@ -23,13 +23,13 @@ Leave demo value to `False` to launch the kinematic analysis.
 The reference frame of the robot in its original position.
 ![image2](https://github.com/ancabilloni/Robot-Arm-Kinematics/blob/master/misc_images/original_pos.png)
 
-To define the homogeneous transformation between joints in this robot arm, I applied the Denavit–Hartenberg method
-with the convention as follow:
-[image]
-
 Here is the diagram with reference frames being define to follow DH method to find the parameters for the 
 transformation matrices:
 ![image3](https://github.com/ancabilloni/Robot-Arm-Kinematics/blob/master/misc_images/Reference_frame.png)
+
+To define the homogeneous transformation between joints in this robot arm, I applied the Denavit–Hartenberg method
+with the convention as follow:
+![image7](https://github.com/ancabilloni/Robot-Arm-Kinematics/blob/master/misc_images/Selection_066.png)
 
 This table is the result of all the parameters being define according to the DH convention above:
 ![image4](https://github.com/ancabilloni/Robot-Arm-Kinematics/blob/master/misc_images/DH_table.png)
@@ -50,8 +50,7 @@ into half to solve for the kinematically decouple problems.
 
 ### Solving for joint_1, joint_2, joint_3 angles
 As mentioned earlier, joint_5 is the wrist center. To solve for the first half of the problem, which are the first three joint angles,
-I can apply some trigonometry calculation to find these angles if I know the coordinate of the wrist-center. The 2D diagram of the problem
-is this:
+I can apply some trigonometry calculation to find these angles if I know the coordinate of the wrist-center. The diagrams of the problem are:
 
 ![image3](https://github.com/ancabilloni/Robot-Arm-Kinematics/blob/master/misc_images/3D.png)
 ![image4](https://github.com/ancabilloni/Robot-Arm-Kinematics/blob/master/misc_images/diagram_23.png)
@@ -62,9 +61,32 @@ The position of the end-effector is known as this information can be achieved by
             py = req.poses[x].position.y
             pz = req.poses[x].position.z
 ```
-Because the base_link is in fixed position where it can only allow rotation on z axis, the relationship between the end-effector
-and the base_link is exinstrict rotation. That means, I can achieve the rotation matrix for the end-effector by knowing the roll, pitch,
-yaw angles between end-effector and base_link:
+Because the base_link is in fixed position where it can only allow rotation on z axis, the relationship between the end-effector and the base_link is extrinsic rotation. That means, I can achieve the rotation matrix for the end-effector by knowing the roll, pitch, yaw angles between end-effector and base_link then apply the following the Euler matrices calculation:
+```
+def RotationMatrix(roll, pitch, yaw):
+    R_x = Matrix([[1,         0,          0],
+                  [0, cos(roll), -sin(roll)],
+                  [0, sin(roll),  cos(roll)]])
+
+    R_y = Matrix([[ cos(pitch), 0, sin(pitch)],
+                  [          0, 1,          0],
+                  [-sin(pitch), 0, cos(pitch)]])
+
+    R_z = Matrix([[cos(yaw),-sin(yaw), 0],
+                  [sin(yaw), cos(yaw), 0],
+                  [       0,        0, 1]])
+
+    return R_z*R_y*R_x
+```
+```
+            (roll, pitch, yaw) = tf.transformations.euler_from_quaternion(
+                [req.poses[x].orientation.x, req.poses[x].orientation.y,
+                    req.poses[x].orientation.z, req.poses[x].orientation.w])
+
+            R0_EE = RotationMatrix(roll, pitch, yaw)
+```
+Because the coordinate between URDF in ROS and DH convention I used here are different, some correction should be applied to bring the R0_EE calculated by applying Euler matrices to DH orientation:
+
 ```
 def R_correction(roll, pitch, yaw):
     R_x = Matrix([[1,         0,          0],
@@ -80,13 +102,10 @@ def R_correction(roll, pitch, yaw):
                   [       0,        0, 1]])
 
     return R_y*R_z
-```
-```
-            (roll, pitch, yaw) = tf.transformations.euler_from_quaternion(
-                [req.poses[x].orientation.x, req.poses[x].orientation.y,
-                    req.poses[x].orientation.z, req.poses[x].orientation.w])
+    
+ R_corr = R_correction(0, pi/2, pi)
 
-            R0_EE = RotationMatrix(roll, pitch, yaw)
+ R0_EE = R0_EE*R_corr
 ```
 With known postion and orientation of end-effector, I can achieve the position of the wrist center by:
 ```
