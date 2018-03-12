@@ -139,7 +139,7 @@ In this second part of the decouple problem, I can define the rotation between j
    
    R0_3.inverse()*R0_EE = R0_3.inverse()*R0_3*R3_4*R4_5*R5_6*R6_EE
    
-   R0_3.inverse()*R0_EE = I*R0_3*R3_4*R4_5*R5_6*R6_EE = R0_3*R3_4*R4_5*R5_6*R6_EE
+   R0_3.inverse()*R0_EE = I*R3_4*R4_5*R5_6*R6_EE = R3_4*R4_5*R5_6*R6_EE
    
    And:
    R3_EE = R3_4*R4_5*R5_6*R6_EE
