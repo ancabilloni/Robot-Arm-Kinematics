@@ -1,8 +1,8 @@
 ## KUKA ARM K210 - PICK AND PLACE PROJECT
 ![image1](https://s-media-cache-ak0.pinimg.com/236x/62/44/2d/62442d955224718da89238b244578f43--industrial-robots-the-machine.jpg)
 
-The goal of this project is to develop a kinematics model (both forward and inverse) that helps the 6 degree of 
-freedom robot KUKA KR210 to calculate its joints angle to approach target object, pick up the object, and then place the
+The goal of this project is to develop a kinematics mathematical model (both forward and inverse) that helps the 6 degree of 
+freedom robot KUKA KR210 to calculate its joint angles to approach target object, pick up the object, and then place the
 object in the target destination.
 (Credit: This project is the second project in Robotics Nanodegree by Udacity.)
 
@@ -20,15 +20,14 @@ Leave demo value to `False` to launch the kinematic analysis.
 ### Kinematics Analysis
 #### Homogenous Transformation Between Links
 
-The reference frame of the robot in its original position.
+The reference frame of the robot in its default position.
 ![image2](https://github.com/ancabilloni/Robot-Arm-Kinematics/blob/master/misc_images/original_pos.png)
 
-Here is the diagram with reference frames being define to follow DH method to find the parameters for the 
+Here is the diagram with reference frames being define to follow [Denavit-Hartenberg](https://en.wikipedia.org/wiki/Denavit%E2%80%93Hartenberg_parameters) method to find the parameters for the 
 transformation matrices:
 ![image3](https://github.com/ancabilloni/Robot-Arm-Kinematics/blob/master/misc_images/Reference_frame.png)
 
-To define the homogeneous transformation between joints in this robot arm, I applied the Denavit–Hartenberg method
-with the convention as follow:
+To define the homogeneous transformation between joints in this robot arm, the Denavit–Hartenberg convention I applied as follow:
 ![image7](https://github.com/ancabilloni/Robot-Arm-Kinematics/blob/master/misc_images/Selection_066.png)
 
 This table is the result of all the parameters being define according to the DH convention above:
