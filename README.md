@@ -185,3 +185,6 @@ into its transformation matrix. I can solve for R3_EE
 The arm successfully calculate and pick up the object closely the the reference trajectory in Rviz. There are occassions
 that the gripper would drop othe object during the movement. There could be some precion errors. My further plan for improvement
 is to look into what could cause the errors and enhance the accuracy for the object pick-up.
+
+# Future Enhancement
+- Design a smaller version of 6 DoF to implement the algorithm on the actual arm.
